@@ -1,0 +1,35 @@
+# ── .NET ──
+bin/
+obj/
+*.user
+*.suo
+.vs/
+artifacts/
+TestResults/
+*.trx
+*.coverage
+coverage/
+
+# ── Terraform ──
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# ── Secrets / local config (never commit) ──
+*.env
+.env*
+!.env.example
+secrets.json
+appsettings.*.local.json
+*.pfx
+*.pem
+*.key
+
+# ── OS / editor ──
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
