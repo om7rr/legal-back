@@ -1,0 +1,11 @@
+C:\legal-back\src\LegalPlatform.SharedKernel\bin\Release\net10.0\LegalPlatform.SharedKernel.deps.json
+C:\legal-back\src\LegalPlatform.SharedKernel\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\LegalPlatform.SharedKernel\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.AssemblyInfoInputs.cache
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.AssemblyInfo.cs
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.csproj.CoreCompileInputs.cache
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\refint\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\LegalPlatform.SharedKernel\obj\Release\net10.0\ref\LegalPlatform.SharedKernel.dll

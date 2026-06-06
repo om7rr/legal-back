@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Cases\bin\Release\net10.0\LegalPlatform.Modules.Cases.deps.json
+C:\legal-back\src\modules\Cases\bin\Release\net10.0\LegalPlatform.Modules.Cases.dll
+C:\legal-back\src\modules\Cases\bin\Release\net10.0\LegalPlatform.Modules.Cases.pdb
+C:\legal-back\src\modules\Cases\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Cases\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.AssemblyInfo.cs
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPla.9B916B3E.Up2Date
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.dll
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\refint\LegalPlatform.Modules.Cases.dll
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\LegalPlatform.Modules.Cases.pdb
+C:\legal-back\src\modules\Cases\obj\Release\net10.0\ref\LegalPlatform.Modules.Cases.dll

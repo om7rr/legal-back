@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Billing\bin\Release\net10.0\LegalPlatform.Modules.Billing.deps.json
+C:\legal-back\src\modules\Billing\bin\Release\net10.0\LegalPlatform.Modules.Billing.dll
+C:\legal-back\src\modules\Billing\bin\Release\net10.0\LegalPlatform.Modules.Billing.pdb
+C:\legal-back\src\modules\Billing\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Billing\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.AssemblyInfo.cs
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPla.DBDD494B.Up2Date
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.dll
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\refint\LegalPlatform.Modules.Billing.dll
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\LegalPlatform.Modules.Billing.pdb
+C:\legal-back\src\modules\Billing\obj\Release\net10.0\ref\LegalPlatform.Modules.Billing.dll

@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Zatca\bin\Release\net10.0\LegalPlatform.Modules.Zatca.deps.json
+C:\legal-back\src\modules\Zatca\bin\Release\net10.0\LegalPlatform.Modules.Zatca.dll
+C:\legal-back\src\modules\Zatca\bin\Release\net10.0\LegalPlatform.Modules.Zatca.pdb
+C:\legal-back\src\modules\Zatca\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Zatca\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.AssemblyInfo.cs
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPla.6974BFEE.Up2Date
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.dll
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\refint\LegalPlatform.Modules.Zatca.dll
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\LegalPlatform.Modules.Zatca.pdb
+C:\legal-back\src\modules\Zatca\obj\Release\net10.0\ref\LegalPlatform.Modules.Zatca.dll

@@ -1,0 +1,17 @@
+# gitleaks configuration. Runs as a pre-commit hook and a CI gate.
+title = "Legal Platform secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Local-only, non-secret development defaults"
+paths = [
+    '''\.env\.example$''',
+    '''docker-compose\.yml$''',
+]
+# Conventional local dev password — not a real secret.
+regexes = [
+    '''POSTGRES_PASSWORD:-postgres''',
+    '''Password=postgres''',
+]

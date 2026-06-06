@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  SOLUTION: LegalPlatform.slnx
+
+jobs:
+  # 1–4: build, lint/format, test (with real Postgres + Redis), dependency security.
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: legalplatform
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s
+          --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 3s --health-retries 5
+    env:
+      ConnectionStrings__Postgres: "Host=localhost;Port=5432;Database=legalplatform;Username=postgres;Password=postgres"
+      ConnectionStrings__Redis: "localhost:6379"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+      - name: Format (verify)
+        run: dotnet format ${{ env.SOLUTION }} --verify-no-changes --no-restore
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION }} -c Release --no-restore
+      - name: Test
+        run: dotnet test ${{ env.SOLUTION }} -c Release --no-build --verbosity normal
+      - name: Dependency vulnerability scan
+        run: |
+          dotnet list ${{ env.SOLUTION }} package --vulnerable --include-transitive 2>&1 | tee vuln.txt
+          if grep -q -E ">\s*(High|Critical)" vuln.txt; then
+            echo "::error::High/Critical vulnerable packages found"; exit 1
+          fi
+
+  # 4 (cont.): secret scanning.
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  # 5: API contract tests (Postman/Newman) against a live instance with migrations applied.
+  contract-tests:
+    runs-on: ubuntu-latest
+    needs: build-test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: legalplatform
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s
+          --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 3s --health-retries 5
+    env:
+      ConnectionStrings__Postgres: "Host=localhost;Port=5432;Database=legalplatform;Username=postgres;Password=postgres"
+      ConnectionStrings__Redis: "localhost:6379"
+      ASPNETCORE_URLS: "http://localhost:5080"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Apply migrations
+        run: |
+          dotnet tool restore
+          dotnet dotnet-ef database update \
+            -p src/LegalPlatform.Infrastructure/LegalPlatform.Infrastructure.csproj \
+            -s src/LegalPlatform.Api/LegalPlatform.Api.csproj
+      - name: Start API
+        run: |
+          dotnet run --project src/LegalPlatform.Api/LegalPlatform.Api.csproj &
+          for i in {1..30}; do
+            curl -sf http://localhost:5080/health && break || sleep 2
+          done
+      - name: Run Newman
+        run: |
+          npm install -g newman
+          newman run postman/LegalPlatform.postman_collection.json \
+            -e postman/local.postman_environment.json
+
+  # 6: container image build (push requires registry credentials — human-provisioned).
+  container:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -f Dockerfile -t legalplatform-api:ci .
+      # NOTE: image scan + push to a KSA-region registry requires credentials —
+      # "requires human execution with credentials".
+
+  # 7: deploy — staging on merge, production behind a manual approval gate.
+  # Actual deploy + secret injection require cloud credentials this pipeline does not hold.
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [contract-tests, container]
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    steps:
+      - run: echo "Deploy to staging — requires human execution with credentials (see docs/cicd.md)."
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    environment: production # configure a required reviewer in GitHub for the approval gate
+    steps:
+      - run: echo "Deploy to production — requires human execution with credentials (see docs/cicd.md)."

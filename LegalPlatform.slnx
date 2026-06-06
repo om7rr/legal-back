@@ -1,0 +1,45 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LegalPlatform.Api/LegalPlatform.Api.csproj" />
+    <Project Path="src/LegalPlatform.Infrastructure/LegalPlatform.Infrastructure.csproj" />
+    <Project Path="src/LegalPlatform.SharedKernel/LegalPlatform.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/" />
+  <Folder Name="/src/modules/Audit/">
+    <Project Path="src/modules/Audit/LegalPlatform.Modules.Audit.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Billing/">
+    <Project Path="src/modules/Billing/LegalPlatform.Modules.Billing.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Cases/">
+    <Project Path="src/modules/Cases/LegalPlatform.Modules.Cases.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Clients/">
+    <Project Path="src/modules/Clients/LegalPlatform.Modules.Clients.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/CourtIntegrations/">
+    <Project Path="src/modules/CourtIntegrations/LegalPlatform.Modules.CourtIntegrations.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Documents/">
+    <Project Path="src/modules/Documents/LegalPlatform.Modules.Documents.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Identity/">
+    <Project Path="src/modules/Identity/LegalPlatform.Modules.Identity.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Notifications/">
+    <Project Path="src/modules/Notifications/LegalPlatform.Modules.Notifications.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Reporting/">
+    <Project Path="src/modules/Reporting/LegalPlatform.Modules.Reporting.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Tenancy/">
+    <Project Path="src/modules/Tenancy/LegalPlatform.Modules.Tenancy.csproj" />
+  </Folder>
+  <Folder Name="/src/modules/Zatca/">
+    <Project Path="src/modules/Zatca/LegalPlatform.Modules.Zatca.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LegalPlatform.Api.Tests/LegalPlatform.Api.Tests.csproj" />
+    <Project Path="tests/LegalPlatform.Architecture.Tests/LegalPlatform.Architecture.Tests.csproj" />
+  </Folder>
+</Solution>

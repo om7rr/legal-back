@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\LegalPlatform.SharedKernel\LegalPlatform.SharedKernel.csproj" />
+    <ProjectReference Include="..\LegalPlatform.Infrastructure\LegalPlatform.Infrastructure.csproj" />
+    <ProjectReference Include="..\modules\Identity\LegalPlatform.Modules.Identity.csproj" />
+    <ProjectReference Include="..\modules\Tenancy\LegalPlatform.Modules.Tenancy.csproj" />
+    <ProjectReference Include="..\modules\Clients\LegalPlatform.Modules.Clients.csproj" />
+    <ProjectReference Include="..\modules\Cases\LegalPlatform.Modules.Cases.csproj" />
+    <ProjectReference Include="..\modules\CourtIntegrations\LegalPlatform.Modules.CourtIntegrations.csproj" />
+    <ProjectReference Include="..\modules\Documents\LegalPlatform.Modules.Documents.csproj" />
+    <ProjectReference Include="..\modules\Billing\LegalPlatform.Modules.Billing.csproj" />
+    <ProjectReference Include="..\modules\Zatca\LegalPlatform.Modules.Zatca.csproj" />
+    <ProjectReference Include="..\modules\Notifications\LegalPlatform.Modules.Notifications.csproj" />
+    <ProjectReference Include="..\modules\Reporting\LegalPlatform.Modules.Reporting.csproj" />
+    <ProjectReference Include="..\modules\Audit\LegalPlatform.Modules.Audit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

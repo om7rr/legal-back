@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Notifications\bin\Release\net10.0\LegalPlatform.Modules.Notifications.deps.json
+C:\legal-back\src\modules\Notifications\bin\Release\net10.0\LegalPlatform.Modules.Notifications.dll
+C:\legal-back\src\modules\Notifications\bin\Release\net10.0\LegalPlatform.Modules.Notifications.pdb
+C:\legal-back\src\modules\Notifications\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Notifications\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.AssemblyInfo.cs
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPla.7B666984.Up2Date
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.dll
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\refint\LegalPlatform.Modules.Notifications.dll
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\LegalPlatform.Modules.Notifications.pdb
+C:\legal-back\src\modules\Notifications\obj\Release\net10.0\ref\LegalPlatform.Modules.Notifications.dll

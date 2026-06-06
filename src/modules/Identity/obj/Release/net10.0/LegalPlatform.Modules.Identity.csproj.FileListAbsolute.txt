@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Identity\bin\Release\net10.0\LegalPlatform.Modules.Identity.deps.json
+C:\legal-back\src\modules\Identity\bin\Release\net10.0\LegalPlatform.Modules.Identity.dll
+C:\legal-back\src\modules\Identity\bin\Release\net10.0\LegalPlatform.Modules.Identity.pdb
+C:\legal-back\src\modules\Identity\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Identity\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.AssemblyInfo.cs
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPla.2816DE15.Up2Date
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.dll
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\refint\LegalPlatform.Modules.Identity.dll
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\LegalPlatform.Modules.Identity.pdb
+C:\legal-back\src\modules\Identity\obj\Release\net10.0\ref\LegalPlatform.Modules.Identity.dll

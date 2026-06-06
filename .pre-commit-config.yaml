@@ -1,0 +1,8 @@
+# Pre-commit hooks. Install once: `pip install pre-commit && pre-commit install`.
+# Secret scanning runs locally before every commit (also enforced in CI).
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args: ["--config", ".gitleaks.toml"]

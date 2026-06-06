@@ -1,0 +1,87 @@
+{
+  "info": {
+    "name": "Legal Platform API",
+    "description": "API contract collection. Source of truth is the OpenAPI doc; keep this in sync with every endpoint change. Folders mirror bounded contexts. No secrets — use environment placeholder variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Liveness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test('has status field', function () { pm.expect(body).to.have.property('status'); });",
+                  "pm.test('is Healthy', function () { pm.expect(body.status).to.eql('Healthy'); });",
+                  "pm.test('echoes correlation id', function () { pm.response.to.have.header('X-Correlation-ID'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Readiness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health/ready", "host": ["{{baseUrl}}"], "path": ["health", "ready"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('responds with JSON status', function () {",
+                  "  var body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('status');",
+                  "  pm.expect(body).to.have.property('checks');",
+                  "});",
+                  "// 200 (Healthy) when Postgres + Redis are reachable; 503 (Unhealthy) otherwise.",
+                  "pm.test('status code is 200 or 503', function () { pm.expect([200,503]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multitenancy (negative tests)",
+      "description": "Tenant-isolation negative tests live here. Each data endpoint (Cases, Clients, ...) must include a test proving tenant {{tenantId}} cannot read another tenant's data. Placeholder until data endpoints exist.",
+      "item": [
+        {
+          "name": "Root (tenant header demo)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
+            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

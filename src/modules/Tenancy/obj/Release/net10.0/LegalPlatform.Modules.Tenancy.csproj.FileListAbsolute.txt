@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Tenancy\bin\Release\net10.0\LegalPlatform.Modules.Tenancy.deps.json
+C:\legal-back\src\modules\Tenancy\bin\Release\net10.0\LegalPlatform.Modules.Tenancy.dll
+C:\legal-back\src\modules\Tenancy\bin\Release\net10.0\LegalPlatform.Modules.Tenancy.pdb
+C:\legal-back\src\modules\Tenancy\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Tenancy\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.AssemblyInfo.cs
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPla.C639E507.Up2Date
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.dll
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\refint\LegalPlatform.Modules.Tenancy.dll
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\LegalPlatform.Modules.Tenancy.pdb
+C:\legal-back\src\modules\Tenancy\obj\Release\net10.0\ref\LegalPlatform.Modules.Tenancy.dll

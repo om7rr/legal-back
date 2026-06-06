@@ -1,0 +1,15 @@
+C:\legal-back\src\modules\Audit\bin\Release\net10.0\LegalPlatform.Modules.Audit.deps.json
+C:\legal-back\src\modules\Audit\bin\Release\net10.0\LegalPlatform.Modules.Audit.dll
+C:\legal-back\src\modules\Audit\bin\Release\net10.0\LegalPlatform.Modules.Audit.pdb
+C:\legal-back\src\modules\Audit\bin\Release\net10.0\LegalPlatform.SharedKernel.dll
+C:\legal-back\src\modules\Audit\bin\Release\net10.0\LegalPlatform.SharedKernel.pdb
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.csproj.AssemblyReference.cache
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.GeneratedMSBuildEditorConfig.editorconfig
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.AssemblyInfoInputs.cache
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.AssemblyInfo.cs
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.csproj.CoreCompileInputs.cache
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPla.FDFC8110.Up2Date
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.dll
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\refint\LegalPlatform.Modules.Audit.dll
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\LegalPlatform.Modules.Audit.pdb
+C:\legal-back\src\modules\Audit\obj\Release\net10.0\ref\LegalPlatform.Modules.Audit.dll
