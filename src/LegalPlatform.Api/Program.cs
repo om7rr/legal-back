@@ -1,10 +1,12 @@
+using LegalPlatform.Api;
 using LegalPlatform.Api.Health;
 using LegalPlatform.Api.Middleware;
 using LegalPlatform.Api.Multitenancy;
 using LegalPlatform.Api.RateLimiting;
 using LegalPlatform.Infrastructure;
 using LegalPlatform.Modules.Audit;
-using LegalPlatform.Modules.Tenancy;
+using LegalPlatform.Modules.Cases;
+using LegalPlatform.Modules.Cases.Api;
 using LegalPlatform.SharedKernel.Multitenancy;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -26,17 +28,15 @@ try
         .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
         .WriteTo.Console(new CompactJsonFormatter()));
 
-    // Bounded-context assemblies that own EF configurations (added as modules gain entities).
-    var moduleAssemblies = new[]
-    {
-        typeof(TenancyModule).Assembly,
-        typeof(AuditModule).Assembly,
-    };
-
-    builder.Services.AddInfrastructure(builder.Configuration, moduleAssemblies);
+    // Bounded-context assemblies that own EF configurations (see ModuleCatalog — shared with the
+    // design-time migrations factory so they never drift).
+    builder.Services.AddInfrastructure(builder.Configuration, ModuleCatalog.Assemblies);
 
     builder.Services.AddScoped<TenantContext>();
     builder.Services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<TenantContext>());
+
+    builder.Services.AddCasesModule();
+    builder.Services.AddAuditModule();
 
     builder.Services.AddScoped<PostgresHealthCheck>();
     builder.Services.AddScoped<RedisHealthCheck>();
@@ -84,6 +84,8 @@ try
     }).DisableRateLimiting();
 
     app.MapGet("/", () => Results.Ok(new { name = "Legal Platform API", status = "ok" }));
+
+    app.MapCasesEndpoints();
 
     app.Run();
 }

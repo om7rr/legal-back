@@ -1,5 +1,8 @@
 using System.Reflection;
+using LegalPlatform.Infrastructure.Events;
 using LegalPlatform.Infrastructure.Persistence;
+using LegalPlatform.SharedKernel.Events;
+using LegalPlatform.SharedKernel.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +29,8 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(postgres));
+        services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+        services.AddScoped<IEventBus, InProcessEventBus>();
 
         var redis = configuration.GetConnectionString("Redis");
         if (string.IsNullOrWhiteSpace(redis))

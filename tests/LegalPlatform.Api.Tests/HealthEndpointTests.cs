@@ -1,17 +1,18 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace LegalPlatform.Api.Tests;
 
 /// <summary>
-/// Exercises the liveness endpoint through the full middleware pipeline via WebApplicationFactory.
+/// Exercises the liveness endpoint through the full middleware pipeline. Uses the shared API factory
+/// (one host for the whole assembly) so multiple factories of the same entry point can't interfere.
 /// Liveness depends on nothing external, so it passes without Postgres/Redis.
 /// </summary>
-public sealed class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
+[Collection(ApiCollection.Name)]
+public sealed class HealthEndpointTests
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly InMemoryApiFactory _factory;
 
-    public HealthEndpointTests(WebApplicationFactory<Program> factory) => _factory = factory;
+    public HealthEndpointTests(InMemoryApiFactory factory) => _factory = factory;
 
     [Fact]
     public async Task Liveness_returns_200_and_healthy()

@@ -6,6 +6,103 @@
   },
   "item": [
     {
+      "name": "Cases",
+      "description": "Cases context. Tenant via X-Tenant-Id (until Nafath). Includes a tenant-isolation negative test.",
+      "item": [
+        {
+          "name": "Create case",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Tenant-Id", "value": "{{tenantId}}" },
+              { "key": "X-Actor-Id", "value": "{{actorId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseNumber\": \"C-001\",\n  \"title\": \"قضية تجارية\",\n  \"type\": \"tijari\",\n  \"court\": \"المحكمة التجارية — الرياض\",\n  \"clientId\": \"00000000-0000-0000-0000-000000000001\",\n  \"leadLawyerId\": \"00000000-0000-0000-0000-000000000002\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cases", "host": ["{{baseUrl}}"], "path": ["api", "cases"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', function () { pm.response.to.have.status(201); });",
+                  "var body = pm.response.json();",
+                  "pm.test('returns id + caseNumber', function () {",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.expect(body.caseNumber).to.eql('C-001');",
+                  "});",
+                  "pm.collectionVariables.set('createdCaseId', body.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List cases (my tenant)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/cases", "host": ["{{baseUrl}}"], "path": ["api", "cases"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+                  "pm.test('is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get case by id",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/cases/{{createdCaseId}}", "host": ["{{baseUrl}}"], "path": ["api", "cases", "{{createdCaseId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tenant isolation — other tenant cannot read it (404)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "X-Tenant-Id", "value": "99999999-9999-9999-9999-999999999999" } ],
+            "url": { "raw": "{{baseUrl}}/api/cases/{{createdCaseId}}", "host": ["{{baseUrl}}"], "path": ["api", "cases", "{{createdCaseId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 for another tenant (no cross-tenant read)', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Health",
       "item": [
         {

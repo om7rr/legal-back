@@ -25,3 +25,13 @@ Apply to every new endpoint/feature before it's "done".
 - [x] Security headers present (verified by test).
 - [x] Threat note: `threat-notes/health.md`.
 - [x] In Postman; covered by integration test.
+
+## Cases module
+- [x] AuthZ by tenant (default-deny): create requires a tenant; cross-tenant read → 404.
+- [x] Tenant-isolation negative tests (`CasesEndpointsTests`).
+- [x] Input validated (required fields → 400; duplicate case number → 409).
+- [x] No secrets/PII in logs; correlation id present.
+- [x] Threat note: `threat-notes/cases.md`.
+- [x] Entities classified (`Case` → Confidential).
+- [x] In Postman (Cases folder, incl. isolation negative test).
+- [ ] **Auth (Nafath/JWT) — header-based tenant/actor is a demo gap; replace before real data.**

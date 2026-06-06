@@ -1,6 +1,4 @@
 using LegalPlatform.Infrastructure.Persistence;
-using LegalPlatform.Modules.Audit;
-using LegalPlatform.Modules.Tenancy;
 using LegalPlatform.SharedKernel.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -27,11 +25,7 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
             .UseNpgsql(connectionString)
             .Options;
 
-        var registry = new ModuleRegistry(new[]
-        {
-            typeof(TenancyModule).Assembly,
-            typeof(AuditModule).Assembly,
-        });
+        var registry = new ModuleRegistry(ModuleCatalog.Assemblies);
 
         return new AppDbContext(options, new DesignTimeTenantContext(), registry);
     }

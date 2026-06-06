@@ -1,6 +1,8 @@
 using System.Reflection;
 using LegalPlatform.SharedKernel.Multitenancy;
+using LegalPlatform.SharedKernel.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace LegalPlatform.Infrastructure.Persistence;
 
@@ -10,7 +12,7 @@ namespace LegalPlatform.Infrastructure.Persistence;
 /// the tenant query filter applied to every <see cref="ITenantOwned"/> entity. Defense-in-depth
 /// alongside Postgres Row-Level Security (ADR-0002).
 /// </summary>
-public sealed class AppDbContext : DbContext
+public sealed class AppDbContext : DbContext, IAppDbContext
 {
     private readonly ITenantContext _tenantContext;
     private readonly ModuleRegistry _moduleRegistry;
@@ -23,6 +25,21 @@ public sealed class AppDbContext : DbContext
     {
         _tenantContext = tenantContext;
         _moduleRegistry = moduleRegistry;
+    }
+
+    /// <summary>
+    /// Identifies the set of module assemblies this context's model is built from. Part of the model
+    /// cache key so contexts configured with different module sets don't share a cached model.
+    /// </summary>
+    internal string ModuleSetKey =>
+        string.Join(",", _moduleRegistry.ModuleAssemblies
+            .Select(a => a.FullName)
+            .OrderBy(n => n, StringComparer.Ordinal));
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.ReplaceService<IModelCacheKeyFactory, ModuleAwareModelCacheKeyFactory>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
