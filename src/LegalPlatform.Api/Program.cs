@@ -78,9 +78,21 @@ try
 
     builder.Services.AddPlatformRateLimiter();
 
-    var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
     builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-        policy.WithOrigins(corsOrigins).AllowAnyHeader().AllowAnyMethod()));
+    {
+        if (builder.Environment.IsProduction())
+        {
+            // Production: strict allowlist from config.
+            var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+            policy.WithOrigins(corsOrigins).AllowAnyHeader().AllowAnyMethod();
+        }
+        else
+        {
+            // Test/dev: reachable from any device/IP. Safe here — auth is a bearer token, not cookies
+            // (no credentials), so AllowAnyOrigin is permitted.
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        }
+    }));
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
