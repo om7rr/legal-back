@@ -12,7 +12,7 @@ public static class CasesEndpoints
 {
     public static IEndpointRouteBuilder MapCasesEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/cases").WithTags("Cases");
+        var group = app.MapGroup("/api/cases").WithTags("Cases").RequireAuthorization();
 
         group.MapPost("", async (
             CreateCaseRequest request,
@@ -39,9 +39,7 @@ public static class CasesEndpoints
     }
 
     private static Guid? ParseActor(HttpContext http)
-        => http.Request.Headers.TryGetValue("X-Actor-Id", out var raw) && Guid.TryParse(raw.ToString(), out var id)
-            ? id
-            : null;
+        => Guid.TryParse(http.User.FindFirst("sub")?.Value, out var id) ? id : null;
 
     private static IResult ToProblem(Error error) => error.Code switch
     {

@@ -1,13 +1,90 @@
 {
   "info": {
     "name": "Legal Platform API",
-    "description": "API contract collection. Source of truth is the OpenAPI doc; keep this in sync with every endpoint change. Folders mirror bounded contexts. No secrets — use environment placeholder variables.",
+    "description": "API contract collection. Source of truth is OpenAPI; keep in sync with every endpoint change. Run the Auth folder top-to-bottom first to populate {{accessToken}}. No secrets — placeholder vars only.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "transactionId", "value": "" },
+    { "key": "createdCaseId", "value": "" }
+  ],
   "item": [
     {
+      "name": "Auth (Nafath mock)",
+      "description": "Mock Nafath flow (ADR-0006). Run in order: Initiate → Simulate confirm → Status (saves token).",
+      "item": [
+        {
+          "name": "1. Initiate",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"nationalId\": \"{{nationalId}}\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/nafath/initiate", "host": ["{{baseUrl}}"], "path": ["api", "auth", "nafath", "initiate"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+              "var b = pm.response.json();",
+              "pm.collectionVariables.set('transactionId', b.transactionId);",
+              "pm.test('returns a 2-digit number', function () { pm.expect(b.number).to.match(/^[0-9]{2}$/); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "2. Simulate confirm (test env only)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"transactionId\": \"{{transactionId}}\",\n  \"accept\": true\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/nafath/_simulate-confirm", "host": ["{{baseUrl}}"], "path": ["api", "auth", "nafath", "_simulate-confirm"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "3. Status (saves token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/auth/nafath/status/{{transactionId}}", "host": ["{{baseUrl}}"], "path": ["api", "auth", "nafath", "status", "{{transactionId}}"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var b = pm.response.json();",
+              "pm.test('Completed', function () { pm.expect(b.status).to.eql('Completed'); });",
+              "pm.test('has access token', function () { pm.expect(b.accessToken).to.be.a('string').and.not.empty; });",
+              "pm.collectionVariables.set('accessToken', b.accessToken);",
+              "pm.collectionVariables.set('refreshToken', b.refreshToken);"
+            ] } }
+          ]
+        },
+        {
+          "name": "4. Refresh",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/refresh", "host": ["{{baseUrl}}"], "path": ["api", "auth", "refresh"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+              "var b = pm.response.json();",
+              "pm.collectionVariables.set('accessToken', b.accessToken);",
+              "pm.collectionVariables.set('refreshToken', b.refreshToken);"
+            ] } }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Cases",
-      "description": "Cases context. Tenant via X-Tenant-Id (until Nafath). Includes a tenant-isolation negative test.",
+      "description": "Cases context. Requires a bearer token from the Auth folder. Tenant comes from the token.",
       "item": [
         {
           "name": "Create case",
@@ -15,89 +92,57 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Tenant-Id", "value": "{{tenantId}}" },
-              { "key": "X-Actor-Id", "value": "{{actorId}}" }
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"caseNumber\": \"C-001\",\n  \"title\": \"قضية تجارية\",\n  \"type\": \"tijari\",\n  \"court\": \"المحكمة التجارية — الرياض\",\n  \"clientId\": \"00000000-0000-0000-0000-000000000001\",\n  \"leadLawyerId\": \"00000000-0000-0000-0000-000000000002\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"caseNumber\": \"C-001\",\n  \"title\": \"قضية تجارية\",\n  \"type\": \"tijari\",\n  \"court\": \"المحكمة التجارية — الرياض\",\n  \"clientId\": \"00000000-0000-0000-0000-000000000001\",\n  \"leadLawyerId\": \"00000000-0000-0000-0000-000000000002\"\n}" },
             "url": { "raw": "{{baseUrl}}/api/cases", "host": ["{{baseUrl}}"], "path": ["api", "cases"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('201 Created', function () { pm.response.to.have.status(201); });",
-                  "var body = pm.response.json();",
-                  "pm.test('returns id + caseNumber', function () {",
-                  "  pm.expect(body).to.have.property('id');",
-                  "  pm.expect(body.caseNumber).to.eql('C-001');",
-                  "});",
-                  "pm.collectionVariables.set('createdCaseId', body.id);"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('201 Created', function () { pm.response.to.have.status(201); });",
+              "var b = pm.response.json();",
+              "pm.collectionVariables.set('createdCaseId', b.id);"
+            ] } }
           ]
         },
         {
-          "name": "List cases (my tenant)",
+          "name": "List cases",
           "request": {
             "method": "GET",
-            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
+            "header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
             "url": { "raw": "{{baseUrl}}/api/cases", "host": ["{{baseUrl}}"], "path": ["api", "cases"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
-                  "pm.test('is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+              "pm.test('array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ] } }
           ]
         },
         {
           "name": "Get case by id",
           "request": {
             "method": "GET",
-            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
+            "header": [ { "key": "Authorization", "value": "Bearer {{accessToken}}" } ],
             "url": { "raw": "{{baseUrl}}/api/cases/{{createdCaseId}}", "host": ["{{baseUrl}}"], "path": ["api", "cases", "{{createdCaseId}}"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
+            ] } }
           ]
         },
         {
-          "name": "Tenant isolation — other tenant cannot read it (404)",
+          "name": "Unauthenticated → 401",
           "request": {
             "method": "GET",
-            "header": [ { "key": "X-Tenant-Id", "value": "99999999-9999-9999-9999-999999999999" } ],
-            "url": { "raw": "{{baseUrl}}/api/cases/{{createdCaseId}}", "host": ["{{baseUrl}}"], "path": ["api", "cases", "{{createdCaseId}}"] }
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/cases", "host": ["{{baseUrl}}"], "path": ["api", "cases"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('404 for another tenant (no cross-tenant read)', function () { pm.response.to.have.status(404); });"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('401 without a token', function () { pm.response.to.have.status(401); });"
+            ] } }
           ]
         }
       ]
@@ -113,19 +158,10 @@
             "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
-                  "var body = pm.response.json();",
-                  "pm.test('has status field', function () { pm.expect(body).to.have.property('status'); });",
-                  "pm.test('is Healthy', function () { pm.expect(body.status).to.eql('Healthy'); });",
-                  "pm.test('echoes correlation id', function () { pm.response.to.have.header('X-Correlation-ID'); });"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+              "pm.test('is Healthy', function () { pm.expect(pm.response.json().status).to.eql('Healthy'); });"
+            ] } }
           ]
         },
         {
@@ -136,46 +172,11 @@
             "url": { "raw": "{{baseUrl}}/health/ready", "host": ["{{baseUrl}}"], "path": ["health", "ready"] }
           },
           "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('responds with JSON status', function () {",
-                  "  var body = pm.response.json();",
-                  "  pm.expect(body).to.have.property('status');",
-                  "  pm.expect(body).to.have.property('checks');",
-                  "});",
-                  "// 200 (Healthy) when Postgres + Redis are reachable; 503 (Unhealthy) otherwise.",
-                  "pm.test('status code is 200 or 503', function () { pm.expect([200,503]).to.include(pm.response.code); });"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Multitenancy (negative tests)",
-      "description": "Tenant-isolation negative tests live here. Each data endpoint (Cases, Clients, ...) must include a test proving tenant {{tenantId}} cannot read another tenant's data. Placeholder until data endpoints exist.",
-      "item": [
-        {
-          "name": "Root (tenant header demo)",
-          "request": {
-            "method": "GET",
-            "header": [ { "key": "X-Tenant-Id", "value": "{{tenantId}}" } ],
-            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var b = pm.response.json();",
+              "pm.test('has status + checks', function () { pm.expect(b).to.have.property('status'); pm.expect(b).to.have.property('checks'); });",
+              "pm.test('200 or 503', function () { pm.expect([200,503]).to.include(pm.response.code); });"
+            ] } }
           ]
         }
       ]

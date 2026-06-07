@@ -14,4 +14,6 @@ paths = [
 regexes = [
     '''POSTGRES_PASSWORD:-postgres''',
     '''Password=postgres''',
+    # Dev/test-only JWT key, never used in Production (JwtSetup guards it). Not a real secret.
+    '''dev-only-insecure-jwt-signing-key-change-me-0123456789abcdef''',
 ]

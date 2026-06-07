@@ -33,5 +33,13 @@ Apply to every new endpoint/feature before it's "done".
 - [x] No secrets/PII in logs; correlation id present.
 - [x] Threat note: `threat-notes/cases.md`.
 - [x] Entities classified (`Case` → Confidential).
-- [x] In Postman (Cases folder, incl. isolation negative test).
-- [ ] **Auth (Nafath/JWT) — header-based tenant/actor is a demo gap; replace before real data.**
+- [x] In Postman (Cases folder).
+- [x] **Auth required** — Cases endpoints `RequireAuthorization`; tenant/actor from verified JWT claims (ADR-0006).
+
+## Auth (Nafath mock + JWT)
+- [x] JWT signature + issuer + audience + lifetime validated.
+- [x] Tenant/role/actor from signed claims, never client headers.
+- [x] Production requires a configured signing key (dev key gated to non-Production).
+- [x] National id classified RegulatedPersonalData; never logged.
+- [x] Threat note: `threat-notes/auth.md`; auth-flow + 401 tests.
+- [ ] **Real Nafath integration** (mock for now), **persisted/revocable refresh tokens** — before production.

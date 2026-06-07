@@ -1,3 +1,4 @@
+using System.Text;
 using LegalPlatform.Api;
 using LegalPlatform.Api.Health;
 using LegalPlatform.Api.Middleware;
@@ -7,9 +8,16 @@ using LegalPlatform.Infrastructure;
 using LegalPlatform.Modules.Audit;
 using LegalPlatform.Modules.Cases;
 using LegalPlatform.Modules.Cases.Api;
+using LegalPlatform.Modules.Identity;
+using LegalPlatform.Modules.Identity.Api;
+using LegalPlatform.Modules.Identity.Application;
+using LegalPlatform.Modules.Identity.Auth;
 using LegalPlatform.SharedKernel.Multitenancy;
+using LegalPlatform.SharedKernel.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -37,6 +45,29 @@ try
 
     builder.Services.AddCasesModule();
     builder.Services.AddAuditModule();
+    builder.Services.AddIdentityModule(builder.Configuration, builder.Environment);
+
+    // JWT bearer auth — keys/issuer/audience resolved once (ADR-0006).
+    var jwt = JwtSetup.Resolve(builder.Configuration, builder.Environment);
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.MapInboundClaims = false;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwt.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwt.Audience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
+                ValidateLifetime = true,
+                RoleClaimType = "role",
+                NameClaimType = "sub",
+            };
+        });
+    builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<PostgresHealthCheck>();
     builder.Services.AddScoped<RedisHealthCheck>();
@@ -69,6 +100,8 @@ try
 
     app.UseCors();
     app.UseRateLimiter();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.UseMiddleware<TenantResolverMiddleware>();
 
     app.MapHealthChecks("/health", new HealthCheckOptions
@@ -85,7 +118,23 @@ try
 
     app.MapGet("/", () => Results.Ok(new { name = "Legal Platform API", status = "ok" }));
 
+    // Auth flow is anonymous; the simulate-confirm endpoint is exposed only outside Production.
+    app.MapAuthEndpoints(enableSimulator: !app.Environment.IsProduction());
     app.MapCasesEndpoints();
+
+    // Seed the test environment's firms/users (idempotent). Best-effort: a missing DB must not crash startup.
+    using (var scope = app.Services.CreateScope())
+    {
+        try
+        {
+            var db = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+            await IdentitySeeder.SeedAsync(db);
+        }
+        catch (Exception seedEx)
+        {
+            Log.Warning(seedEx, "Identity seed skipped (database not ready).");
+        }
+    }
 
     app.Run();
 }

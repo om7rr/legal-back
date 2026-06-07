@@ -1,11 +1,12 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace LegalPlatform.Api.Tests;
 
 /// <summary>
-/// End-to-end Cases endpoint tests through the real pipeline (InMemory DB). Each test uses fresh
-/// tenant ids so the shared store can't bleed between tests; tenant scoping does the isolation.
+/// End-to-end Cases endpoint tests through the real pipeline (InMemory DB), now authenticated via the
+/// mock Nafath flow. Tenant comes from the JWT, so isolation is driven by which seeded user logs in.
 /// </summary>
 [Collection(ApiCollection.Name)]
 public sealed class CasesEndpointsTests
@@ -14,10 +15,11 @@ public sealed class CasesEndpointsTests
 
     public CasesEndpointsTests(InMemoryApiFactory factory) => _factory = factory;
 
-    private HttpClient ClientFor(string tenantId)
+    private async Task<HttpClient> AuthedClientAsync(string nationalId)
     {
+        var token = await AuthTestHelper.GetAccessTokenAsync(_factory, nationalId);
         var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Add("X-Tenant-Id", tenantId);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
     }
 
@@ -31,60 +33,56 @@ public sealed class CasesEndpointsTests
         leadLawyerId = Guid.NewGuid(),
     };
 
+    private sealed record CaseListItemDto(Guid Id, string CaseNumber, string Title, string Type, string Court, string Status);
+    private sealed record CreateCaseResponseDto(Guid Id, string CaseNumber);
+
     [Fact]
-    public async Task Create_then_list_is_scoped_to_the_creating_tenant()
+    public async Task Unauthenticated_request_is_401()
     {
-        var tenantA = Guid.NewGuid().ToString();
-        var tenantB = Guid.NewGuid().ToString();
-
-        var created = await ClientFor(tenantA).PostAsJsonAsync("/api/cases", NewCase("C-001", "قضية تجارية"));
-        Assert.True(created.StatusCode == HttpStatusCode.Created, await created.Content.ReadAsStringAsync());
-
-        var listA = await ClientFor(tenantA).GetFromJsonAsync<List<CaseListItemDto>>("/api/cases");
-        Assert.NotNull(listA);
-        Assert.Single(listA!);
-        Assert.Equal("C-001", listA![0].CaseNumber);
-
-        var listB = await ClientFor(tenantB).GetFromJsonAsync<List<CaseListItemDto>>("/api/cases");
-        Assert.NotNull(listB);
-        Assert.Empty(listB!);
+        var client = _factory.CreateClient(); // no token
+        var res = await client.PostAsJsonAsync("/api/cases", NewCase("C-AUTH", "no token"));
+        Assert.Equal(HttpStatusCode.Unauthorized, res.StatusCode);
     }
 
     [Fact]
-    public async Task Create_without_tenant_header_is_forbidden()
+    public async Task Create_is_visible_to_same_tenant_and_hidden_from_another()
     {
-        var client = _factory.CreateClient(); // no X-Tenant-Id
-        var res = await client.PostAsJsonAsync("/api/cases", NewCase("C-NOH", "no tenant"));
-        Assert.Equal(HttpStatusCode.Forbidden, res.StatusCode);
+        var firmA = await AuthedClientAsync(AuthTestHelper.FirmAAdmin);
+        var firmB = await AuthedClientAsync(AuthTestHelper.FirmBAdmin);
+
+        var created = await firmA.PostAsJsonAsync("/api/cases", NewCase("C-VIS-001", "قضية تجارية"));
+        Assert.True(created.StatusCode == HttpStatusCode.Created, await created.Content.ReadAsStringAsync());
+
+        var listA = await firmA.GetFromJsonAsync<List<CaseListItemDto>>("/api/cases");
+        Assert.Contains(listA!, c => c.CaseNumber == "C-VIS-001");
+
+        var listB = await firmB.GetFromJsonAsync<List<CaseListItemDto>>("/api/cases");
+        Assert.DoesNotContain(listB!, c => c.CaseNumber == "C-VIS-001");
     }
 
     [Fact]
     public async Task Duplicate_case_number_within_tenant_conflicts()
     {
-        var tenant = Guid.NewGuid().ToString();
-        var first = await ClientFor(tenant).PostAsJsonAsync("/api/cases", NewCase("DUP-1", "first"));
+        var firmA = await AuthedClientAsync(AuthTestHelper.FirmAAdmin);
+
+        var first = await firmA.PostAsJsonAsync("/api/cases", NewCase("C-DUP-1", "first"));
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
 
-        var second = await ClientFor(tenant).PostAsJsonAsync("/api/cases", NewCase("DUP-1", "second"));
+        var second = await firmA.PostAsJsonAsync("/api/cases", NewCase("C-DUP-1", "second"));
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
     }
 
     [Fact]
     public async Task Get_by_id_is_404_for_another_tenant()
     {
-        var tenantA = Guid.NewGuid().ToString();
-        var tenantB = Guid.NewGuid().ToString();
+        var firmA = await AuthedClientAsync(AuthTestHelper.FirmAAdmin);
+        var firmB = await AuthedClientAsync(AuthTestHelper.FirmBAdmin);
 
-        var created = await ClientFor(tenantA).PostAsJsonAsync("/api/cases", NewCase("C-777", "owned by A"));
+        var created = await firmA.PostAsJsonAsync("/api/cases", NewCase("C-OWN-777", "owned by A"));
         var body = await created.Content.ReadFromJsonAsync<CreateCaseResponseDto>();
-        Assert.NotNull(body);
         var path = $"/api/cases/{body!.Id}";
 
-        Assert.Equal(HttpStatusCode.OK, (await ClientFor(tenantA).GetAsync(path)).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await ClientFor(tenantB).GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await firmA.GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await firmB.GetAsync(path)).StatusCode);
     }
-
-    private sealed record CaseListItemDto(Guid Id, string CaseNumber, string Title, string Type, string Court, string Status);
-
-    private sealed record CreateCaseResponseDto(Guid Id, string CaseNumber);
 }

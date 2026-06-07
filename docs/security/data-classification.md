@@ -9,6 +9,7 @@ blocks any new entity missing a classification.**
 | `Tenant` | Tenancy | Confidential | Firm admin (own), platform ops | Id + slug only; no contacts | Life of contract + legal retention | KSA |
 | `AuditEntry` | Audit | Confidential | Read: firm admin, compliance; append-only | References only — never raw content/secrets | Long-term (legal defensibility) | KSA |
 | `Case` | Cases | Confidential | Firm admin, lawyer (own tenant) | Case number/title OK; client identity is a reference (id) | Life of case + legal retention | KSA |
+| `AppUser` | Identity | RegulatedPersonalData | Self; firm admin (own firm) | Never log national id; user id only | Per PDPL; erasure on offboarding | KSA |
 
 ## Levels
 - **Public** — freely shareable.

@@ -1,6 +1,7 @@
 using System.Reflection;
 using LegalPlatform.Modules.Audit;
 using LegalPlatform.Modules.Cases;
+using LegalPlatform.Modules.Identity;
 using LegalPlatform.Modules.Tenancy;
 
 namespace LegalPlatform.Api;
@@ -17,5 +18,6 @@ public static class ModuleCatalog
         typeof(TenancyModule).Assembly,
         typeof(AuditModule).Assembly,
         typeof(CasesModule).Assembly,
+        typeof(IdentityModule).Assembly,
     ];
 }
